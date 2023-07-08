@@ -1,30 +1,28 @@
 import { Module } from '@nestjs/common';
+import { TypeOrmModule } from '@nestjs/typeorm';
 import {
-  AppController,
-  BookController,
-  AuthorController,
-  GenreController,
+  ProductController,
 } from './controllers';
-import { DataServicesModule } from './services/data-services/data-services.module';
-import { BookUseCasesModule } from './use-cases/book/book-use-cases.module';
-import { AuthorUseCasesModule } from './use-cases/author/author-use-cases.module';
-import { GenreUseCasesModule } from './use-cases/genre/genre-use-cases.module';
-import { CrmServicesModule } from './services/crm-services/crm-services.module';
+import { ProductEntity, ClientEntity } from './core/entities';
+import { ProductService } from './use-cases/product';
+import { Product } from './core/repositories/product.repository';
 
 @Module({
   imports: [
-    DataServicesModule,
-    BookUseCasesModule,
-    AuthorUseCasesModule,
-    GenreUseCasesModule,
-    CrmServicesModule,
+    TypeOrmModule.forFeature([ProductEntity, ClientEntity]),
+    TypeOrmModule.forRoot({
+      type: 'sqlite',
+      database: 'src/database/db.sqlite',
+      entities: [__dirname + '/**/*.entity{.ts,.js}'],
+      synchronize: true,
+    }),
   ],
   controllers: [
-    AppController,
-    BookController,
-    AuthorController,
-    GenreController,
+    ProductController,
   ],
-  providers: [],
+  providers: [
+    ProductService, 
+    Product,
+  ],
 })
 export class AppModule {}
